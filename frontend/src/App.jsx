@@ -6,6 +6,7 @@ import WelcomePage from './pages/WelcomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DiagnosticsPage from './pages/DiagnosticsPage';
+import ManufacturerDashboard from './pages/ManufacturerDashboard';
 import './App.css';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/reports" element={<ReportsComponent />} />
           <Route path="/diagnostics" element={<DiagnosticsPage />} />
+          <Route path="/manufacturer-dashboard" element={<ManufacturerDashboard />} />
         </Routes>
       </div>
     </Router>

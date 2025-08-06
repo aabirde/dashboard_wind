@@ -12,6 +12,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const turbineRoutes = require('./routes/turbineRoutes');
+const manufacturerRoutes = require('./routes/manufacturerRoutes');
 
 dotenv.config();
 
@@ -55,6 +56,7 @@ app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/reports', reportRoutes);
 app.use('/turbines', turbineRoutes);
+app.use('/manufacturer', manufacturerRoutes);
 
 // 404 handler - must be after all routes
 app.get('/favicon.ico', (req, res) => res.status(204).end());
