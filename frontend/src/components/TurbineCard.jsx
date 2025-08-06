@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TurbineCard = ({ turbine }) => {
+const TurbineCard = ({ turbine, visibleStats }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'operational': return 'bg-green-500';
@@ -18,14 +18,30 @@ const TurbineCard = ({ turbine }) => {
           {turbine.status}
         </span>
       </div>
-      <div className="mt-4">
-        <p className="text-3xl font-bold">{turbine.current_power_output} kW</p>
-        <p className="text-sm text-gray-500">Current Power Output</p>
-      </div>
-      <div className="mt-2">
-        <p className="text-lg">{turbine.wind_speed} m/s</p>
-        <p className="text-sm text-gray-500">Wind Speed</p>
-      </div>
+      {visibleStats.current_power_output && (
+        <div className="mt-4">
+          <p className="text-3xl font-bold">{turbine.current_power_output} kW</p>
+          <p className="text-sm text-gray-500">Current Power Output</p>
+        </div>
+      )}
+      {visibleStats.wind_speed && (
+        <div className="mt-2">
+          <p className="text-lg">{turbine.wind_speed} m/s</p>
+          <p className="text-sm text-gray-500">Wind Speed</p>
+        </div>
+      )}
+      {visibleStats.temperature && (
+        <div className="mt-2">
+          <p className="text-lg">{turbine.temperature} °C</p>
+          <p className="text-sm text-gray-500">Temperature</p>
+        </div>
+      )}
+      {visibleStats.vibration_level && (
+        <div className="mt-2">
+          <p className="text-lg">{turbine.vibration_level}</p>
+          <p className="text-sm text-gray-500">Vibration Level</p>
+        </div>
+      )}
     </div>
   );
 };

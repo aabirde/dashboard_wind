@@ -19,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    role: {
+      type: DataTypes.ENUM('client', 'manufacturer'),
+      allowNull: false,
+      defaultValue: 'client'
+    },
   });
 
   User.associate = models => {
