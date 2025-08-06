@@ -10,7 +10,8 @@ const ReportsComponent = () => {
         const reportsData = await getReports();
         setReports(reportsData);
       } catch (error) {
-        // Handle error
+        console.error('Error fetching reports:', error);
+        setError('Failed to fetch reports. Please try again later.'); // Set an error message
       }
     };
 

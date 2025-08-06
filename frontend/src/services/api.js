@@ -2,17 +2,13 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3002/api';
 
-// Create an axios instance for API requests
 const api = axios.create({
+  baseURL: 'http://localhost:5000/api',
   baseURL: API_URL,
+  withCredentials: true, // This is crucial for sending cookies
 });
 
-// Function to get the auth token from local storage
-const getAuthToken = () => {
-  return localStorage.getItem('token');
-};
 
-// Add a request interceptor to include the token in headers
 api.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
@@ -26,7 +22,6 @@ api.interceptors.request.use(
   }
 );
 
-// API functions
 export const login = async (credentials) => {
   try {
     const response = await axios.post(`${API_URL}/auth/login`, credentials);

@@ -14,16 +14,51 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ where: { email } });
-    if (!user || !(await bcrypt.compare(password, user.password)))
-      return res.status(401).json({ error: 'Invalid credentials' });
+  const { username, password } = req.body;
 
-    const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.json({ token, role: user.role });
+  try {
+    let user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    const payload = {
+      user: {
+        id: user.id,
+        role: user.role
+      },
+    };
+
+    const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+
+    res.cookie('token', token, {
+      httpOnly: true, // Makes the cookie inaccessible to client-side JavaScript, preventing XSS.
+      secure: process.env.NODE_ENV === 'production', // Ensures the cookie is only sent over HTTPS in production.
+      sameSite: 'strict', // Provides strong protection against CSRF attacks.
+      maxAge: 3600000, // Sets the cookie's expiration time in milliseconds (e.g., 1 hour).
+    });
+
+    res.status(200).json({
+        message: "Logged in successfully",
+        user: {
+            id: user.id,
+            username: user.username,
+            role: user.role
+        }
+    });
+
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err.message);
+    res.status(500).send('Server error');
   }
 };
 
