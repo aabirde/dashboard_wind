@@ -1,82 +1,119 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api'; 
+import axios from 'axios';
+
+const PasswordValidator = ({ password }) => {
+  const rules = [
+    { text: 'At least 8 characters', regex: /.{8,}/ },
+    { text: 'An uppercase letter (A-Z)', regex: /[A-Z]/ },
+    { text: 'A lowercase letter (a-z)', regex: /[a-z]/ },
+    { text: 'A number (0-9)', regex: /\d/ },
+    { text: 'A special character (@$!%*?&)', regex: /[@$!%*?&]/ },
+  ];
+
+  return (
+    <div className="mt-2 text-sm space-y-1">
+      {rules.map((rule, index) => {
+        const isMet = rule.regex.test(password);
+        return (
+          <div key={index} className={`flex items-center ${isMet ? 'text-green-600' : 'text-gray-500'}`}>
+            <span className="w-10 font-bold mr-2 text-left">
+              {isMet ? 'Complete: ' : 'Incomplete: '}
+            </span>
+            <span>{rule.text}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('client');
-  const [error, setError] = useState(null); 
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Clear previous errors
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
     try {
-      await api.post('/auth/register', { username, email, password, role });
+      await axios.post('http://localhost:3002/api/register', {
+        username,
+        email,
+        password,
+      });
       navigate('/login');
     } catch (err) {
       console.error('Registration failed:', err);
-      const message = err.response?.data?.errors?.[0]?.msg || err.response?.data?.message || 'Registration failed. Please check your details and try again.';
-      setError(message);
+      const errorMsg = err.response?.data?.errors?.[0]?.msg || 'Registration failed. Please try again.';
+      setError(errorMsg);
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md w-full max-w-sm">
-        <h2 className="mb-4 text-2xl font-bold text-center">Register</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
+        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
         
-        {/* Username Input */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{error}</span>
+          </div>
+        )}
+
         <div className="mb-4">
           <label className="block text-gray-700">Username</label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded mt-1"
             required
           />
         </div>
-
-        {/* Email Input */}
         <div className="mb-4">
           <label className="block text-gray-700">Email</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded mt-1"
             required
           />
         </div>
-
-        {/* Password Input */}
         <div className="mb-4">
           <label className="block text-gray-700">Password</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded mt-1"
             required
           />
+
+        </div>
+        <div className="mb-6">
+          <label className="block text-gray-700">Confirm Password</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded mt-1"
+            required
+          />
+          <PasswordValidator password={password} />
         </div>
 
-        {/* Role Select */}
-        <div className="mb-4">
-          <label className="block text-gray-700">Role</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)} className="w-full p-2 border border-gray-300 rounded">
-            <option value="client">Client</option>
-            <option value="manufacturer">Manufacturer</option>
-          </select>
-        </div>
-
-        {/* FIX 3: Display the error message */}
-        {error && <p className="mb-4 text-xs italic text-red-500">{error}</p>}
-
-        <button type="submit" className="w-full p-2 text-white bg-green-500 rounded hover:bg-green-600">
+        <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
           Register
         </button>
       </form>
