@@ -17,12 +17,15 @@ const manufacturerRoutes = require('./routes/manufacturerRoutes');
 dotenv.config();
 
 const app = express();
+const corsOptions = {
+  origin: 'http://localhost:5173', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 const PORT = process.env.PORT || 3002;
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3002',
-  credentials: true
-}));
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -51,12 +54,13 @@ app.get('/api', (req, res) => {
   });
 });
 
-// API routes
-app.use('/auth', authRoutes);
-app.use('/users', userRoutes);
-app.use('/reports', reportRoutes);
-app.use('/turbines', turbineRoutes);
-app.use('/manufacturer', manufacturerRoutes);
+const apiRouter = express.Router();
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/users', userRoutes);
+apiRouter.use('/reports', reportRoutes);
+apiRouter.use('/turbines', turbineRoutes);
+apiRouter.use('/manufacturer', manufacturerRoutes);
+app.use('/api', apiRouter);
 
 // 404 handler - must be after all routes
 app.get('/favicon.ico', (req, res) => res.status(204).end());

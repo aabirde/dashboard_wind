@@ -34,89 +34,111 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState(''); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
 
-    if (password !== confirmPassword) {
+    if (password != confirmPassword) {
       setError('Passwords do not match.');
       return;
     }
 
     try {
-      await axios.post('http://localhost:3002/api/register', {
+      const response = await axios.post('http://localhost:3002/api/auth/register', {
         username,
         email,
         password,
+        confirmPassword,
       });
-      navigate('/login');
+      setSuccessMessage(response.data.message); 
     } catch (err) {
       console.error('Registration failed:', err);
-      const errorMsg = err.response?.data?.errors?.[0]?.msg || 'Registration failed. Please try again.';
+      let errorMsg = 'Registration failed. Please try again.';
+      if (err.response) {
+        // If the server responded with an error
+        const { data } = err.response;
+        
+        if (data?.errors?.[0]?.msg) {
+          errorMsg = data.errors[0].msg;
+        } 
+        else if (typeof data === 'string') {
+          errorMsg = data;
+        }
+      } else if (err.request) {
+        errorMsg = 'Cannot connect to the server. Please check your network connection.';
+      }
       setError(errorMsg);
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
-        
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <span className="block sm:inline">{error}</span>
-          </div>
-        )}
+      {/* Show success message instead of the form */}
+      {successMessage ? (
+        <div className="bg-white p-6 rounded shadow-md w-full max-w-sm text-center">
+            <h2 className="text-2xl font-bold mb-4 text-green-600">Registration Successful</h2>
+            <p>{successMessage}</p>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full max-w-sm">
+            <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
+            
+            {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span className="block sm:inline">{error}</span>
+            </div>
+            )}
 
-        <div className="mb-4">
-          <label className="block text-gray-700">Username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mt-1"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mt-1"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mt-1"
-            required
-          />
+            <div className="mb-4">
+                <label className="block text-gray-700">Username</label>
+                <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                    required
+                />
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Email</label>
+                <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                    required
+                />
+            </div>
+            <div className="mb-4">
+                <label className="block text-gray-700">Password</label>
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                    required
+                />
+            </div>
+            <div className="mb-6">
+                <label className="block text-gray-700">Confirm Password</label>
+                <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded mt-1"
+                    required
+                />
+                <PasswordValidator password={password} />
+            </div>
 
-        </div>
-        <div className="mb-6">
-          <label className="block text-gray-700">Confirm Password</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded mt-1"
-            required
-          />
-          <PasswordValidator password={password} />
-        </div>
-
-        <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
-          Register
-        </button>
-      </form>
+            <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+            Register
+            </button>
+        </form>
+      )}
     </div>
   );
 };

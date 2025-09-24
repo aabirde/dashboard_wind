@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DiagnosticsPage from './pages/DiagnosticsPage';
 import ManufacturerDashboard from './pages/ManufacturerDashboard';
+import EmailVerificationPage from './pages/EmailVerificationPage';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/welcome" element={<WelcomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify-email/:token" element={<EmailVerificationPage />} /> 
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/reports" element={<ReportsComponent />} />
           <Route path="/diagnostics" element={<DiagnosticsPage />} />

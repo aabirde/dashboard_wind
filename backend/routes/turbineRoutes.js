@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-router.get('/', auth, getAllTurbines); // optionally protect with paywall
+router.get('/', auth, getAllTurbines);
 router.get('/:id', auth, getTurbineById);
 
 module.exports = router;

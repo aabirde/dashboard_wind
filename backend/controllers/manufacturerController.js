@@ -5,7 +5,7 @@ exports.getCumulativeStats = async (req, res) => {
   try {
     const totalPower = await Turbine.sum('current_power_output');
     const totalEnergy = await Turbine.sum('total_energy_generated');
-    const operationalTurbines = await Turbine.count({ where: { status: 'operational' } });
+    const operationalTurbines = await Turbine.count({where:{status:'operational'} });
     const totalTurbines = await Turbine.count();
 
     res.json({

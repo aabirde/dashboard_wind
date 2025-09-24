@@ -6,7 +6,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 const LineChart = () => {
   const data = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','September','October','November','December'],
     datasets: [
       {
         label: 'Energy Generation (kWh)',
