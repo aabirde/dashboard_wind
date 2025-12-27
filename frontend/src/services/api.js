@@ -4,8 +4,8 @@ const API_URL = 'http://localhost:3002/api';
 
 const api = axios.create({
   baseURL: 'http://localhost:3002/api',
-  baseURL: API_URL,
-  withCredentials: true, // This is crucial for sending cookies
+  //withCredentials: true, // This is crucial for sending cookies
+  credentials: true
 });
 
 
@@ -31,6 +31,7 @@ export const login = async (credentials) => {
     localStorage.setItem('token', token);
     console.log("3. Token saved to localStorage:", token);
     localStorage.setItem('role', role);
+    localStorage.setItem('user_id', response.data.user_id); // Save userId if returned
     return response.data;
   } catch (error) {
   console.error('Login service error:', error.response?.data || error.message);

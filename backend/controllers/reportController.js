@@ -11,8 +11,8 @@ exports.getReports = async (req, res) => {
 
 exports.createReport = async (req, res) => {
   try {
-    const { userId, content } = req.body;
-    const report = await Report.create({ userId, content });
+    const {user_id, turbine_id, title, content, report_type } = req.body;
+    const report = await Report.create({ user_id, turbine_id, title, content, report_type });
     res.status(201).json(report);
   } catch (err) {
     res.status(400).json({ error: err.message });

@@ -18,15 +18,27 @@ const ReportsComponent = () => {
     fetchReports();
   }, []);
 
-  const handleCreateReport = async () => {
-    try {
-      const newReport = { /* your report data */ };
-      await createReport(newReport);
-      // Refresh the reports list
-    } catch (error) {
-      // Handle error
-    }
-  };
+const handleCreateReport = async (turbine) => {
+  try {
+    const currentUserId = localStorage.getItem('user_id');
+    const newReport = {
+      user_id: currentUserId, // Should come from your auth state
+      turbine_id: turbine.id, // Linking the report to the specific turbine
+      title: `Maintenance Report for ${turbine.name}`,
+      content: `Turbine ${turbine.name} (SN: ${turbine.serial_number}) 
+                currently has a power output of ${turbine.current_power_output}kW 
+                and efficiency of ${turbine.efficiency}%.`,
+      report_type: 'performance'
+    };
+    
+    await createReport(newReport);
+    alert('Report created successfully!');
+  } catch (error) {
+    console.error('Error creating report:', error);
+  }
+};
+
+
 
   return (
     <div>

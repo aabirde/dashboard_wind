@@ -170,6 +170,7 @@ module.exports = (sequelize, DataTypes) => {
   {
     tableName: 'turbines',
     timestamps: true,
+    underscored:true,
     indexes: [
       { fields: ['user_id'] },
       { fields: ['status'] },

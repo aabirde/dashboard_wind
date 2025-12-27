@@ -13,7 +13,7 @@ const EmailVerificationPage = () => {
                 return;
             }
             try {
-                const response = await axios.get(`http://localhost:3002/api/verify-email/${token}`);
+                const response = await api.get(`http://localhost:3002/api/auth/verify-email/${token}`);
                 setMessage(response.data.message);
             } catch (error) {
                 const errorMsg = error.response?.data?.message || 'Email verification failed. The link may have expired.';
