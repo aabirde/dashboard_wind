@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/users.js');
+const { User } = require('../models');
 const transporter = require('../config/mailer');
 
 exports.register = async (req, res) => {
@@ -44,12 +44,13 @@ exports.register = async (req, res) => {
         };
 
         await transporter.sendMail(mailOptions);
-        
+        console.log(`Verification email sent to ${email}`);        
         res.status(201).json({ message: 'User registered successfully. Please check your email to verify your account.' });
 
     } catch (err) {
-        console.error('Registration Error:', err.message);
-        res.status(500).send('Server error');
+        console.error('REGISTRATION FAILED:', err.message);
+        console.error(err);
+        res.status(500).send('Server error during registration process.');
     }
 };
 
@@ -81,10 +82,10 @@ exports.login = async (req, res) => {
         const token = jwt.sign(
             payload,
             process.env.JWT_SECRET,
-            { expiresIn: '5h' } // Login token valid for 5 hours
+            { expiresIn: '5h' }
         );
 
-        res.json({ token });
+        res.json({ token, role: user.role });
 
     } catch (err) {
         console.error('Login Error:', err.message);
@@ -106,10 +107,12 @@ exports.verifyEmail = async (req, res) => {
         if (!user) {
             return res.status(400).json({ errors: [{ msg: 'Invalid token, user not found.' }] });
         }
-        
-        // TODO: Update the user model to mark the email as verified
-        // user.isVerified = true;
-        // await user.save();
+        if (user.is_verified) {
+            return res.status(400).json({ errors: [{ msg: 'Email already verified.' }] });
+        }
+
+        user.is_verified = true;
+        await user.save();
 
         res.status(200).json({ message: 'Email verified successfully. You may now log in.' });
     } catch (err) {

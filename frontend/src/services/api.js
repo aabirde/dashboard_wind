@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = 'http://localhost:3002/api';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'http://localhost:3002/api',
   baseURL: API_URL,
   withCredentials: true, // This is crucial for sending cookies
 });
@@ -11,7 +11,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = getAuthToken();
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -23,14 +23,18 @@ api.interceptors.request.use(
 );
 
 export const login = async (credentials) => {
+  console.log("1. Login function started with:", credentials);
   try {
-    const response = await axios.post(`${API_URL}/auth/login`, credentials);
-    const { token } = response.data;
+    const response = await api.post(`${API_URL}/auth/login`, credentials);
+    console.log("2. Response received from server:", response.data);
+    const { token, role } = response.data;
     localStorage.setItem('token', token);
+    console.log("3. Token saved to localStorage:", token);
+    localStorage.setItem('role', role);
     return response.data;
   } catch (error) {
-    console.error('Login failed:', error);
-    throw error;
+  console.error('Login service error:', error.response?.data || error.message);
+  throw error;
   }
 };
 
