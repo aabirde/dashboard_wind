@@ -16,6 +16,22 @@ const manufacturerRoutes = require('./routes/manufacturerRoutes');
 
 dotenv.config();
 
+const startDB = async () => {
+  try {
+    await connectDB();
+    await sequelize.sync({ 
+      alter: process.env.NODE_ENV === 'development', 
+      force: false 
+    });
+    console.log('Database connected');
+  } catch (err) {
+    console.error('DB Connection Error:', err);
+  }
+};
+
+// 2. CALL IT HERE (Top-level)
+// This ensures it runs regardless of whether app.listen is called
+startDB();
 const app = express();
 ///const corsOptions = {
 ///  origin: ['http://localhost:5173', 'https://dashboard-wind-finale.vercel.app', 'https://dashboardwind.vercel.app', 'https://dashboardwind-f58u1zrgf-aabir-des-projects.vercel.app'], 
@@ -26,28 +42,25 @@ const app = express();
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow local development
-    if (!origin || origin.startsWith('https://dashboard-wind-finale')) {
-      return callback(null, true);
-    }
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://dashboard-wind-finale.vercel.app',
+      'https://dashboardwind.vercel.app'
+    ];
     
-    // Allow any Vercel deployment under your project name
-    // Replace 'dashboard-wind' with your actual Vercel project name
-    const vercelPattern = /\.vercel\.app$/; 
-    if (vercelPattern.test(origin)) {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
       return callback(null, true);
     }
 
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-
-
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 const PORT = process.env.PORT || 3002;
 
 
