@@ -30,17 +30,22 @@ const app = express();
 
 const corsOptions = {
   origin: function (origin, callback) {
+    if (!origin) {
+      return callback(null, true);
+    }
+
     const allowedOrigins = [
       'http://localhost:5173',
       'https://dashboard-wind-finale.vercel.app',
       'https://dashboardwind.vercel.app'
     ];
     
-    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+    // Check if origin is in allowed list OR is a Vercel deployment
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
       return callback(null, true);
     }
 
-  ///  callback(new Error('Not allowed by CORS'));
+   callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
