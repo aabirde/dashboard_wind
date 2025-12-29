@@ -9,7 +9,10 @@ class AppError extends Error {
 
 const ErrorHandler = (error, req, res, next) => {
   let appError;
-  
+  if (req.headers.origin) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+  }
   if (error.name === 'SequelizeConnectionError') {
     appError = new AppError('Database connection failed', 500);
   } else if (error.name === 'SequelizeValidationError') {
