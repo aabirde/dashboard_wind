@@ -13,18 +13,18 @@ const ErrorHandler = (error, req, res, next) => {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Credentials', 'true');
   }
-  if (error.name === 'SequelizeConnectionError') {
+if (error.name === 'SequelizeConnectionError') {
     appError = new AppError('Database connection failed', 500);
   } else if (error.name === 'SequelizeValidationError') {
     const message = error.errors.map(err => err.message).join(', ');
     appError = new AppError(message, 400);
+  } else if (error.message === 'Not allowed by CORS') {
+    appError = new AppError('Not allowed by CORS', 403);
   } else {
-      if (error.name === 'SequelizeConnectionError') {
-        message = 'Database connection failed';
-        statusCode = 500;
-  }   else if (error.message === 'Not allowed by CORS') {
-        statusCode = 403;
-  }
+    appError = new AppError(
+      error.message || 'Internal Server Error', 
+      error.statusCode || 500
+    );
   }
   
   res.status(appError.statusCode).json({

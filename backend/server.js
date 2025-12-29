@@ -40,14 +40,16 @@ const corsOptions = {
       return callback(null, true);
     }
 
-    callback(new Error('Not allowed by CORS'));
+  ///  callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization','Accept'],
+  optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 const PORT = process.env.PORT || 3002;
 
