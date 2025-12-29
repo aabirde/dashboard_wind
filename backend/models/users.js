@@ -28,11 +28,11 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = models => {
     User.hasMany(models.Report, {
-      foreignKey: 'userId',
+      foreignKey: 'user_id',
       as: 'reports'
     });
     User.hasMany(models.Turbine, {
-      foreignKey: 'userId',
+      foreignKey: 'user_id',
       as: 'turbines'
     });
   };

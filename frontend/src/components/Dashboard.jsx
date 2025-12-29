@@ -20,6 +20,10 @@ const Dashboard = () => {
     fetchTurbines();
   }, []);
 
+  // Calculate Fleet KPIs
+  const totalOutput = turbines.reduce((sum, t) => sum + (t.current_power_output || 0), 0);
+  const activeAlerts = turbines.filter(t => t.status !== 'operational').length;
+
     const handleStatToggle = (stat) => {
     setVisibleStats(prevStats => ({
       ...prevStats,
@@ -50,8 +54,11 @@ const Dashboard = () => {
           <TurbineCard key={turbine.id} turbine={turbine} visibleStats={visibleStats} />
         ))}
       </div>
-      <div className="grid grid-cols-1 gap-6">
-        <LineChart />
+
+      {/* Analytics Card */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h3 className="text-lg font-bold text-gray-800 mb-6">Performance Trend</h3>
+        <div className="h-64"><LineChart /></div>
       </div>
     </div>
   );

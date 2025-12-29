@@ -1,49 +1,70 @@
 import React from 'react';
 
 const TurbineCard = ({ turbine, visibleStats }) => {
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'operational': return 'bg-green-500';
-      case 'maintenance': return 'bg-yellow-500';
-      case 'offline': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
+  const getStatusStyle = (status) => {
+    const styles = {
+      operational: 'bg-green-100 text-green-700',
+      maintenance: 'bg-amber-100 text-amber-700',
+      offline: 'bg-red-100 text-red-700'
+    };
+    return styles[status] || 'bg-gray-100 text-gray-700';
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-start">
-        <h3 className="text-lg font-semibold">{turbine.name}</h3>
-        <span className={`px-2 py-1 text-xs text-white rounded-full ${getStatusColor(turbine.status)}`}>
-          {turbine.status}
-        </span>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
+      <div className="p-5">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h3 className="font-bold text-gray-900 text-lg">{turbine.name}</h3>
+            <p className="text-xs text-gray-400 font-mono tracking-tighter">ID: {turbine.serial_number || 'TRB-001'}</p>
+          </div>
+          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusStyle(turbine.status)}`}>
+            {turbine.status}
+          </span>
+        </div>
+
+        <div className="space-y-5">
+          {visibleStats.current_power_output && (
+            <div>
+              <div className="flex justify-between items-end mb-1">
+                <span className="text-3xl font-black text-gray-900">{turbine.current_power_output}</span>
+                <span className="text-xs font-bold text-gray-400 pb-1">kW OUTPUT</span>
+              </div>
+              <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                <div 
+                  className="bg-blue-500 h-full transition-all duration-500" 
+                  style={{ width: `${(turbine.current_power_output / 2000) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-y-4 pt-2">
+            {visibleStats.wind_speed && (
+              <Metric label="Wind Speed: " value={`${turbine.wind_speed} m/s`} />
+            )}
+            {visibleStats.temperature && (
+              <Metric label="Temperature: " value={`${turbine.temperature}°C`} />
+            )}
+            {visibleStats.vibration_level && (
+              <Metric 
+                label="Vibration: " 
+                value={`${turbine.vibration_level} Hz`} 
+                highlight={turbine.vibration_level > 5} 
+              />
+            )}
+          </div>
+        </div>
       </div>
-      {visibleStats.current_power_output && (
-        <div className="mt-4">
-          <p className="text-3xl font-bold">{turbine.current_power_output} kW</p>
-          <p className="text-sm text-gray-500">Current Power Output</p>
-        </div>
-      )}
-      {visibleStats.wind_speed && (
-        <div className="mt-2">
-          <p className="text-lg">{turbine.wind_speed} m/s</p>
-          <p className="text-sm text-gray-500">Wind Speed</p>
-        </div>
-      )}
-      {visibleStats.temperature && (
-        <div className="mt-2">
-          <p className="text-lg">{turbine.temperature} °C</p>
-          <p className="text-sm text-gray-500">Temperature</p>
-        </div>
-      )}
-      {visibleStats.vibration_level && (
-        <div className="mt-2">
-          <p className="text-lg">{turbine.vibration_level}</p>
-          <p className="text-sm text-gray-500">Vibration Level</p>
-        </div>
-      )}
     </div>
   );
 };
+
+const Metric = ({ label, value, highlight }) => (
+  <div className="flex flex-col">
+    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{label}</span>
+    <span className={`text-sm font-bold ${highlight ? 'text-red-500' : 'text-gray-700'}`}>{value}</span>
+  </div>
+);
 
 export default TurbineCard;

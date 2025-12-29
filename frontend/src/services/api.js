@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3002/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002/api';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3002/api',
+  baseURL: API_URL,
   //withCredentials: true, // This is crucial for sending cookies
   credentials: true
 });
