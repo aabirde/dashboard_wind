@@ -26,7 +26,8 @@ api.interceptors.request.use(
 export const login = async (credentials) => {
   console.log("1. Login function started with:", credentials);
   try {
-    const response = await api.post(`${API_URL}/auth/login`, credentials);
+    //const response = await api.post(`${API_URL}/auth/login`, credentials);
+    const response = await api.post(`/auth/login`, credentials);
     console.log("2. Response received from server:", response.data);
     const { token, role } = response.data;
     localStorage.setItem('token', token);

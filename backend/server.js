@@ -18,7 +18,7 @@ dotenv.config();
 
 const app = express();
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://dashboard-wind-finale.vercel.app'], 
+  origin: ['http://localhost:5173', 'https://dashboard-wind-finale.vercel.app', 'https://dashboardwind.vercel.app', 'https://dashboardwind-f58u1zrgf-aabir-des-projects.vercel.app'], 
   credentials:true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
