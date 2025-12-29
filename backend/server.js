@@ -16,18 +16,6 @@ const manufacturerRoutes = require('./routes/manufacturerRoutes');
 
 dotenv.config();
 
-const startDB = async () => {
-  try {
-    await connectDB();
-    await sequelize.sync({ 
-      alter: process.env.NODE_ENV === 'development', 
-      force: false 
-    });
-    console.log('Database connected');
-  } catch (err) {
-    console.error('DB Connection Error:', err);
-  }
-};
 
 // 2. CALL IT HERE (Top-level)
 // This ensures it runs regardless of whether app.listen is called
@@ -63,6 +51,18 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 const PORT = process.env.PORT || 3002;
 
+const startDB = async () => {
+  try {
+    await connectDB();
+    if (process.env.NODE_ENV === 'development') {
+      await sequelize.sync({ alter: true, force: false });
+      console.log('Database synchronized');
+    }
+    console.log('Database connected');
+  } catch (err) {
+    console.error('DB Connection Error:', err);
+  }
+};
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
