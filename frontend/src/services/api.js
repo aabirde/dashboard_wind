@@ -5,7 +5,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002/api';
 const api = axios.create({
   baseURL: API_URL,
   //withCredentials: true, // This is crucial for sending cookies
-  credentials: true
+  credentials: true,
+  'Content-Type': 'application/json'
 });
 
 
