@@ -32,7 +32,7 @@ const connectDB = async () => {
     console.log('Supabase database connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the Supabase database:', error);
-    process.exit(1);
+ //  temp comment process.exit(1);
   }
 };
 
