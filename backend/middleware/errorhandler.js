@@ -19,8 +19,12 @@ const ErrorHandler = (error, req, res, next) => {
     const message = error.errors.map(err => err.message).join(', ');
     appError = new AppError(message, 400);
   } else {
-    const statusCode = error.message === 'Not allowed by CORS' ? 403 : 500;
-    appError = new AppError(error.message || 'Internal Server Error', statusCode);
+      if (error.name === 'SequelizeConnectionError') {
+        message = 'Database connection failed';
+        statusCode = 500;
+  }   else if (error.message === 'Not allowed by CORS') {
+        statusCode = 403;
+  }
   }
   
   res.status(appError.statusCode).json({
