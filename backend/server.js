@@ -17,12 +17,35 @@ const manufacturerRoutes = require('./routes/manufacturerRoutes');
 dotenv.config();
 
 const app = express();
+///const corsOptions = {
+///  origin: ['http://localhost:5173', 'https://dashboard-wind-finale.vercel.app', 'https://dashboardwind.vercel.app', 'https://dashboardwind-f58u1zrgf-aabir-des-projects.vercel.app'], 
+ /// credentials:true,
+ /// methods: ['GET', 'POST', 'PUT', 'DELETE'],
+///  allowedHeaders: ['Content-Type', 'Authorization'],
+///};
+
 const corsOptions = {
-  origin: ['http://localhost:5173', 'https://dashboard-wind-finale.vercel.app', 'https://dashboardwind.vercel.app', 'https://dashboardwind-f58u1zrgf-aabir-des-projects.vercel.app'], 
-  credentials:true,
+  origin: function (origin, callback) {
+    // Allow local development
+    if (!origin || origin.startsWith('https://dashboard-wind-finale')) {
+      return callback(null, true);
+    }
+    
+    // Allow any Vercel deployment under your project name
+    // Replace 'dashboard-wind' with your actual Vercel project name
+    const vercelPattern = /\.vercel\.app$/; 
+    if (vercelPattern.test(origin)) {
+      return callback(null, true);
+    }
+
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
+
 
 app.use(cors(corsOptions));
 const PORT = process.env.PORT || 3002;
