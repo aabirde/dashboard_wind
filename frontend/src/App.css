@@ -40,3 +40,13 @@
 .read-the-docs {
   color: #888;
 }
+.bg-orange {
+  background-color: #fd7e14 !important;
+}
+
+.text-orange {
+  color: #fd7e14 !important;
+}
+.bg-purple {
+  background-color: #472389 !important;
+}

@@ -29,26 +29,26 @@ const app = express();
 ///};
 
 const corsOptions = {
-  // origin: function (origin, callback) {
-  //   if (!origin) {
-  //     return callback(null, true);
-  //   }
+  origin: function (origin, callback) {
+    if (!origin) {
+      return callback(null, true);
+    }
 
-  //   const allowedOrigins = [
-  //     'http://localhost:5173',
-  //     'https://dashboard-wind-finale.vercel.app',
-  //     'https://dashboardwind.vercel.app'
-  //   ];
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'https://dashboard-wind-finale.vercel.app',
+      'https://dashboardwind.vercel.app'
+    ];
     
-  //   // Check if origin is in allowed list OR is a Vercel deployment
-  //   if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
-  //     return callback(null, true);
-  //   }
+    // Check if origin is in allowed list OR is a Vercel deployment
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
 
-  //  callback(new Error('Not allowed by CORS'));
-  //},
-  origin:'*',
-  //credentials: true,
+   callback(new Error('Not allowed by CORS'));
+  },
+  //origin:'*',
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization','Accept'],
   optionsSuccessStatus: 204
