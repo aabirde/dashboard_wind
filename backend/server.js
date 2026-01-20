@@ -36,8 +36,7 @@ const corsOptions = {
 
     const allowedOrigins = [
       'http://localhost:5173',
-      'https://dashboard-wind-finale.vercel.app',
-      'https://dashboardwind.vercel.app'
+      'https://dashboard-wind-finale.vercel.app'
     ];
     
     // Check if origin is in allowed list OR is a Vercel deployment
